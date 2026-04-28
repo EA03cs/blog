@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import '../../../../core/errors/failure.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 
@@ -13,15 +15,25 @@ class AuthRepository {
   }) async {
     try {
       final response = await authService.login(email: email, password: password);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final List data = response.data['data'];
-        print(data);
-        return UserModel.fromJson(data[0]);
-      } else {
-        throw Exception(response.data['message'] ?? 'Login failed');
+      
+      if (response.data['data'] == null || (response.data['data'] as List).isEmpty) {
+        throw 'البيانات المستلمة فارغة';
       }
+
+      final List data = response.data['data'];
+      return UserModel.fromJson(data[0]);
     } catch (e) {
-      rethrow;
+      debugPrint("Login Error Detail: $e"); // بيطبع الخطأ بالتفصيل في الـ Console
+      
+      if (e is DioException) {
+        throw Failure.fromDioError(e).message;
+      }
+      
+      if (e is TypeError) {
+        throw 'خطأ في نوع البيانات المستلمة من السيرفر';
+      }
+      
+      throw e.toString(); // هيرجع رسالة الخطأ الحقيقية عشان نعرف المشكلة فين
     }
   }
 
@@ -34,7 +46,7 @@ class AuthRepository {
     required String confirmPassword,
   }) async {
     try {
-      final response = await authService.signUp(
+      await authService.signUp(
         firstName: firstName,
         middleName: middleName,
         lastName: lastName,
@@ -42,11 +54,12 @@ class AuthRepository {
         password: password,
         confirmPassword: confirmPassword,
       );
-      if (response.statusCode != 200 && response.statusCode != 201) {
-        throw Exception(response.data['message'] ?? 'Signup failed');
-      }
     } catch (e) {
-      rethrow;
+      debugPrint("SignUp Error Detail: $e");
+      if (e is DioException) {
+        throw Failure.fromDioError(e).message;
+      }
+      throw e.toString();
     }
   }
 }

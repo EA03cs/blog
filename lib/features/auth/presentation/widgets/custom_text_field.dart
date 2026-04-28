@@ -9,6 +9,7 @@ class CustomTextField extends StatelessWidget {
   final bool isPassword;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
+  final Function(String)? onChanged;
 
   const CustomTextField({
     super.key,
@@ -17,6 +18,7 @@ class CustomTextField extends StatelessWidget {
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
     this.validator,
+    this.onChanged,
   });
 
   @override
@@ -28,6 +30,7 @@ class CustomTextField extends StatelessWidget {
         obscureText: isPassword,
         keyboardType: keyboardType,
         validator: validator,
+        onChanged: onChanged,
         style: AppTextStyles.bodyStyle,
         decoration: InputDecoration(
           hintText: hintText,

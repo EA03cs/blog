@@ -4,7 +4,7 @@ class UserModel {
   final String middleName;
   final String lastName;
   final String email;
-  final String dob;
+  final String? dob;
   final int confirmEmail;
   final String gender;
 
@@ -14,21 +14,21 @@ class UserModel {
     required this.middleName,
     required this.lastName,
     required this.email,
-    required this.dob,
+    this.dob,
     required this.confirmEmail,
     required this.gender,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      uId: json['u_id'],
-      firstName: json['u_firstname'],
-      middleName: json['u_middlename'],
-      lastName: json['u_lastname'],
-      email: json['u_email'],
+      uId: json['u_id'] ?? 0,
+      firstName: json['u_firstname'] ?? '',
+      middleName: json['u_middlename'] ?? '',
+      lastName: json['u_lastname'] ?? '',
+      email: json['u_email'] ?? '',
       dob: json['u_DOB'],
-      confirmEmail: json['u_confirmEmail'],
-      gender: json['u_gender'],
+      confirmEmail: json['u_confirmEmail'] ?? 0,
+      gender: json['u_gender'] ?? 'male',
     );
   }
 }

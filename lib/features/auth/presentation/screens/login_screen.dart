@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/utils/colors.dart';
 import '../../../../core/utils/appText.dart';
+import '../../../home/presentation/screens/main_screen.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../widgets/custom_button.dart';
@@ -84,7 +85,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('تم تسجيل الدخول بنجاح'), backgroundColor: AppColors.success),
                           );
-                          // Navigate to home
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const MainScreen()),
+                          );
                         } else if (state is AuthFailure) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(state.message), backgroundColor: AppColors.error),

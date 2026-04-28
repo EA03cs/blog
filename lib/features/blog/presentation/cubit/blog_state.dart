@@ -12,6 +12,9 @@ class BlogInitial extends BlogState {}
 
 class BlogLoading extends BlogState {}
 
+// حالة تحميل خاصة بالعمليات (مثل النشر) لعدم تصفير القائمة في الواجهة
+class BlogActionLoading extends BlogState {}
+
 class BlogLoaded extends BlogState {
   final List<BlogModel> blogs;
   const BlogLoaded(this.blogs);

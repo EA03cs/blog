@@ -7,8 +7,8 @@ class BlogCubit extends Cubit<BlogState> {
 
   BlogCubit(this._blogRepository) : super(BlogInitial());
 
-  Future<void> getBlogs() async {
-    emit(BlogLoading());
+  Future<void> getBlogs({bool showLoading = true}) async {
+    if (showLoading) emit(BlogLoading());
     try {
       final blogs = await _blogRepository.getBlogs();
       emit(BlogLoaded(blogs));
@@ -22,7 +22,7 @@ class BlogCubit extends Cubit<BlogState> {
     required String content,
     required String authorId,
   }) async {
-    emit(BlogLoading());
+    emit(BlogActionLoading());
     try {
       await _blogRepository.createBlog(
         title: title,
@@ -30,7 +30,7 @@ class BlogCubit extends Cubit<BlogState> {
         authorId: authorId,
       );
       emit(BlogCreated());
-      getBlogs(); // Refresh list after creation
+      await getBlogs(showLoading: false);
     } catch (e) {
       emit(BlogError(e.toString()));
     }

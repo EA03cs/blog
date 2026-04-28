@@ -15,80 +15,105 @@ class SearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(
-        title: const Text('البحث عن أصدقاء'),
-        centerTitle: true,
-        backgroundColor: AppColors.white,
-        elevation: 0,
-        titleTextStyle: AppTextStyles.titleStyle.copyWith(fontSize: 20.sp),
-      ),
-      body: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Padding(
-          padding: EdgeInsets.all(16.w),
-          child: Column(
-            children: [
-              CustomTextField(
-                hintText: 'ابحث بالاسم...',
-                controller: TextEditingController(),
-                onChanged: (value) {
-                  context.read<SearchCubit>().searchUsers(value);
-                },
-              ),
-              SizedBox(height: 20.h),
-              Expanded(
-                child: BlocBuilder<SearchCubit, SearchState>(
-                  builder: (context, state) {
-                    if (state is SearchLoading) {
-                      return const Center(child: CircularProgressIndicator(color: AppColors.primaryRed));
-                    } else if (state is SearchSuccess) {
-                      if (state.users.isEmpty) {
-                        return const Center(child: Text('لا يوجد نتائج'));
-                      }
-                      return ListView.builder(
-                        itemCount: state.users.length,
-                        itemBuilder: (context, index) {
-                          final user = state.users[index];
-                          return ListTile(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProfileScreen(userId: user.id),
-                                ),
-                              );
-                            },
-                            leading: CircleAvatar(
-                              backgroundColor: AppColors.softRed,
-                              child: Text(
-                                user.firstName.isNotEmpty ? user.firstName[0].toUpperCase() : '?',
-                                style: const TextStyle(color: AppColors.primaryRed),
-                              ),
-                            ),
-                            title: Text('${user.firstName} ${user.lastName}', style: AppTextStyles.bodyStyle),
-                            subtitle: Text(user.email, style: AppTextStyles.hintStyle),
-                            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                          );
-                        },
-                      );
-                    } else if (state is SearchFailure) {
-                      return Center(child: Text(state.message));
-                    }
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.search, size: 80.sp, color: AppColors.lightGrey),
-                          Text('ابدأ البحث الآن', style: AppTextStyles.hintStyle),
-                        ],
-                      ),
-                    );
+      body: SafeArea(
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 32.h),
+                Text(
+                  'بحث',
+                  style: AppTextStyles.titleStyle.copyWith(fontSize: 28.sp),
+                ),
+                Text(
+                  'ابحث عن أصدقائك ومبدعين آخرين',
+                  style: AppTextStyles.hintStyle.copyWith(fontSize: 14.sp),
+                ),
+                SizedBox(height: 24.h),
+                CustomTextField(
+                  hintText: 'ابحث بالاسم أو البريد...',
+                  controller: TextEditingController(),
+                  onChanged: (value) {
+                    context.read<SearchCubit>().searchUsers(value);
                   },
                 ),
-              ),
-            ],
+                SizedBox(height: 24.h),
+                Expanded(
+                  child: BlocBuilder<SearchCubit, SearchState>(
+                    builder: (context, state) {
+                      if (state is SearchLoading) {
+                        return const Center(child: CircularProgressIndicator(color: AppColors.primaryRed));
+                      } else if (state is SearchSuccess) {
+                        if (state.users.isEmpty) {
+                          return _buildEmptyState('لا توجد نتائج بحث مطابقة');
+                        }
+                        return ListView.builder(
+                          itemCount: state.users.length,
+                          itemBuilder: (context, index) {
+                            final user = state.users[index];
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 12.h),
+                              decoration: BoxDecoration(
+                                color: AppColors.offWhite,
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              child: ListTile(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ProfileScreen(userId: user.id)),
+                                ),
+                                leading: CircleAvatar(
+                                  backgroundColor: AppColors.softRed,
+                                  child: Text(
+                                    user.firstName.isNotEmpty ? user.firstName[0].toUpperCase() : '?',
+                                    style: const TextStyle(color: AppColors.primaryRed, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                title: Text('${user.firstName} ${user.lastName}', style: AppTextStyles.bodyStyle),
+                                subtitle: Text(user.email, style: AppTextStyles.hintStyle.copyWith(fontSize: 12.sp)),
+                                trailing: Icon(Icons.arrow_forward_ios, size: 14.sp, color: AppColors.lightGreyText),
+                              ),
+                            );
+                          },
+                        );
+                      }
+                      return _buildInitialState();
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildInitialState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search_rounded, size: 80.sp, color: AppColors.lightGrey),
+          SizedBox(height: 16.h),
+          Text('ابدأ بالبحث عن مستخدمين', style: AppTextStyles.hintStyle),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(String msg) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.person_search_rounded, size: 60.sp, color: AppColors.lightGrey),
+          SizedBox(height: 16.h),
+          Text(msg, style: AppTextStyles.hintStyle),
+        ],
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/utils/cache_helper.dart';
 import '../../data/repository/auth_repository.dart';
 import 'auth_state.dart';
 
@@ -17,6 +18,9 @@ class AuthCubit extends Cubit<AuthState> {
         email: email,
         password: password,
       );
+      
+      await CacheHelper.saveData(key: 'u_id', value: user.uId);
+      
       emit(AuthSuccess(user));
     } catch (e) {
       emit(AuthFailure(e.toString()));
@@ -45,5 +49,10 @@ class AuthCubit extends Cubit<AuthState> {
     } catch (e) {
       emit(AuthFailure(e.toString()));
     }
+  }
+
+  Future<void> logout() async {
+    await CacheHelper.removeData(key: 'u_id');
+    emit(AuthInitial());
   }
 }

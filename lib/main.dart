@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'core/utils/cache_helper.dart';
 import 'features/auth/data/repository/auth_repository.dart';
 import 'features/auth/data/services/auth_service.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
@@ -17,7 +18,9 @@ import 'features/search/data/services/search_service.dart';
 import 'features/search/presentation/cubit/search_cubit.dart';
 import 'features/splash/splashScreen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await CacheHelper.init();
   runApp(const MyApp());
 }
 
@@ -53,17 +56,16 @@ class MyApp extends StatelessWidget {
               fontFamily: 'Cairo',
               scaffoldBackgroundColor: Colors.white,
             ),
-            // إضافة إعدادات اللغة هنا لحل مشكلة الـ DatePicker
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: const [
-              Locale('ar', 'EG'), // العربية
-              Locale('en', 'US'), // الإنجليزية
+              Locale('ar', 'EG'),
+              Locale('en', 'US'),
             ],
-            locale: const Locale('ar', 'EG'), // تعيين العربية كلغة افتراضية
+            locale: const Locale('ar', 'EG'),
             home: const SplashScreen(),
           );
         },

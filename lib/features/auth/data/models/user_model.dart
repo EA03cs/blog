@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class UserModel {
   final int uId;
   final String firstName;
@@ -31,4 +33,21 @@ class UserModel {
       gender: json['u_gender'] ?? 'male',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'u_id': uId,
+      'u_firstname': firstName,
+      'u_middlename': middleName,
+      'u_lastname': lastName,
+      'u_email': email,
+      'u_DOB': dob,
+      'u_confirmEmail': confirmEmail,
+      'u_gender': gender,
+    };
+  }
+
+  String encode() => json.encode(toJson());
+  
+  factory UserModel.decode(String source) => UserModel.fromJson(json.decode(source));
 }

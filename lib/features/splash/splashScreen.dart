@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../core/utils/cache_helper.dart';
 import '../../core/utils/colors.dart';
 import '../../core/utils/appText.dart';
 import '../auth/presentation/screens/login_screen.dart';
+import '../home/presentation/screens/main_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -40,9 +42,18 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   _navigateToNext() async {
     await Future.delayed(const Duration(seconds: 3));
     if (mounted) {
+      final userId = CacheHelper.getData(key: 'u_id');
+      
+      Widget nextScreen;
+      if (userId != null) {
+        nextScreen = const MainScreen();
+      } else {
+        nextScreen = const LoginScreen();
+      }
+
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        MaterialPageRoute(builder: (context) => nextScreen),
       );
     }
   }

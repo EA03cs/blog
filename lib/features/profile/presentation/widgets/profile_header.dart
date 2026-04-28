@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/utils/appText.dart';
 import '../../../../core/utils/colors.dart';
+import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../widgets/profile_circle_button.dart';
 
 class ProfileHeader extends StatelessWidget {
@@ -9,7 +11,6 @@ class ProfileHeader extends StatelessWidget {
   final String email;
   final bool isMyProfile;
   final bool showBackButton;
-  final VoidCallback onLogout;
   final VoidCallback onBack;
 
   const ProfileHeader({
@@ -18,7 +19,6 @@ class ProfileHeader extends StatelessWidget {
     required this.email,
     required this.isMyProfile,
     required this.showBackButton,
-    required this.onLogout,
     required this.onBack,
   });
 
@@ -44,7 +44,11 @@ class ProfileHeader extends StatelessWidget {
             if (isMyProfile)
               ProfileCircleButton(
                 icon: Icons.logout_rounded,
-                onTap: onLogout,
+                onTap: () {
+                  context.read<AuthCubit>().logout().then((value) {
+                    Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                  });
+                },
                 iconColor: AppColors.primaryRed,
               )
             else

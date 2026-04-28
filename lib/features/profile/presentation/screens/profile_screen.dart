@@ -107,7 +107,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         email: profile.email,
                         isMyProfile: isMyProfile,
                         showBackButton: widget.userId != null,
-                        onLogout: () => Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false),
                         onBack: () => Navigator.pop(context),
                       ),
                       SizedBox(height: 40.h),
